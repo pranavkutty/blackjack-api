@@ -6,7 +6,7 @@ const gameSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    "decks": Number,
+    "deck": [String],
     "rounds": [{
         "dealerCards": [String],
         "finished": {
@@ -32,7 +32,7 @@ module.exports = mongoose.model('Games', gameSchema)
 // const temp = new Games({
 //     "players": ["1", "2"],
 //     "finished": false,
-//     "decks": 2,
+//     "decks": ["1H", "2S"],
 //     "rounds": [
 //         {
 //             "dealerCards": ["1H", "2S"],
