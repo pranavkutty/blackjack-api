@@ -335,3 +335,38 @@ router.get("/split/:hand_id", async (req, res) => {
     }
 })
 
+// game_status
+router.get("/status/:game_id", async (req, res) => {
+    try {
+        let dbRes = await Games.findById(req.params.game_id)
+
+        let result = {
+            "gameid": req.params._id,
+            "players": dbRes.players,
+            "finished": dbRes.finished,
+            "deck": dbRes.deck,
+            "rounds": []
+        }
+        let rounds = dbRes.rounds
+
+        for (const [index, round] of rounds.entries()) {
+            let sampleRound = {
+                "finished": round.finished,
+                "dealerCards": round.dealerCards,
+                "turn": round.turn,
+                "hands": []
+            }
+            for (const [index1, handid] of round.hands.entries()) {
+                let dbRes1 = await Hands.findById(handid)
+                sampleRound.hands.push(dbRes1)
+            }
+            console.log(sampleRound)
+            result.rounds.push(sampleRound)
+        }
+        res.status(200).json(result)
+    }
+    catch (err) {
+        res.status(500).json({ "error": err })
+    }
+})
+
