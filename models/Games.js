@@ -17,11 +17,7 @@ const gameSchema = new mongoose.Schema({
             type: Number,
             default: 0
         },
-        "hands": {
-            type: Map,
-            of: String,
-            default: {}
-        },
+        "hands": [String],
         "winners": [String]
     }]
 })
@@ -32,7 +28,7 @@ module.exports = mongoose.model('Games', gameSchema)
 // const temp = new Games({
 //     "players": ["1", "2"],
 //     "finished": false,
-//     "decks": ["1H", "2S"],
+//     "deck": ["1H", "2S"],
 //     "rounds": [
 //         {
 //             "dealerCards": ["1H", "2S"],
@@ -45,14 +41,15 @@ module.exports = mongoose.model('Games', gameSchema)
 //             "winners": ["1"]
 //         },
 //         {
-//             "dealerCards": ["1H", "2S"]
-//             // "turn": 0
-//             // "hands": {
-//             // },
-//             // "winners": []
+//             "dealerCards": ["1H", "2S"],
+//             "turn": 0,
+//             "hands": {},
+//             "winners": []
 //         }
 //     ]
 // })
 
 // // console.log(temp)
-// console.log(temp)
+// let numRounds = temp.rounds.length
+// temp.rounds[numRounds - 1].hands.set('alpha', 'calling beta')
+// console.log(temp.rounds)

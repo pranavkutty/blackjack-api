@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const handSchema = new mongoose.Schema({
-    "1": {
+    "gameid": String,
+    "one": {
         "cards": [String],
         "handValue": {
             type: Number,
@@ -28,7 +29,7 @@ const handSchema = new mongoose.Schema({
             default: 0
         }
     },
-    "2": {
+    "two": {
         "cards": [String],
         "handValue": {
             type: Number,
