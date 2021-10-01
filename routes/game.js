@@ -402,12 +402,13 @@ router.get("/finish_game/:game_id", async (req, res) => {
                         dbRes1.one.payoff = Math.floor(dbRes1.one.bet * 1.5)
                         let dbRes2 = await Users.findById(dbRes.players[index1])
                         dbRes2.coins += dbRes1.one.payoff
-                        round.winners.push(dbRes2._id)
+                        round.winners.push(dbRes2._id + "-" + dbRes1.one.payoff)
                         dbRes2.save()
                     }
 
                     dbRes1.save()
                 }
+                round.finished = true
 
             }
         }
@@ -423,4 +424,21 @@ router.get("/finish_game/:game_id", async (req, res) => {
 
 // winner
 
-router.get("/winner/:gameid")
+router.get("/winner/:game_id", async (req, res) => {
+    try {
+        let dbRes = await Games.findById(req.params.game_id)
+        console.log(dbRes)
+        let rounds = dbRes.rounds
+        let result = {}
+
+        for (const [index, round] of rounds.entries()) {
+            if (round.finished == true) {
+                result[round._id] = round.winners
+            }
+        }
+        res.status(200).json(result)
+    }
+    catch (err) {
+        res.status(500).json({ "error": err })
+    }
+})
