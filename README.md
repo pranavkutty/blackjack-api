@@ -1,6 +1,8 @@
 # BlackJack-API
 
-A backend api with endpoints to play `multiplayer blackjack game`
+A backend api with endpoints to play `multiplayer blackjack game`. <br><br>
+Visit [how to play blackjack](https://www.youtube.com/watch?v=eyoh-Ku9TCI) for video explaination of blackjack gameplay
+
 
 ---
 ## Requirements
