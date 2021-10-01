@@ -354,13 +354,13 @@ router.get("/status/:game_id", async (req, res) => {
                 "finished": round.finished,
                 "dealerCards": round.dealerCards,
                 "turn": round.turn,
-                "hands": []
+                "hands": [],
+                "winner": round.winners
             }
             for (const [index1, handid] of round.hands.entries()) {
                 let dbRes1 = await Hands.findById(handid)
                 sampleRound.hands.push(dbRes1)
             }
-            console.log(sampleRound)
             result.rounds.push(sampleRound)
         }
         res.status(200).json(result)
@@ -370,3 +370,57 @@ router.get("/status/:game_id", async (req, res) => {
     }
 })
 
+// finish game
+
+router.get("/finish_game/:game_id", async (req, res) => {
+    try {
+        let dbRes = await Games.findById(req.params.game_id)
+        let rounds = dbRes.rounds
+        for (const [index, round] of rounds.entries()) {
+            if (round.finished == false) {
+
+                let dealerValue = 0
+
+                for (const card of round.dealerCards) {
+                    dealerValue += getCardValue(card)
+                }
+
+                if (dealerValue == 21) {
+                    res.status(201).json({ "message": "dealer wins with blackjack" })
+                    return
+                }
+
+                while (dealerValue < 17) {
+                    const newCard = drawCard(dbRes)
+                    round.dealerCards.push(newCard)
+                    dealerValue += getCardValue(newCard)
+                }
+                for (const [index1, handid] of round.hands.entries()) {
+                    let dbRes1 = await Hands.findById(handid)
+
+                    if (dbRes1.one.handStatus != "BUST" && dbRes1.one.handValue > dealerValue) {
+                        dbRes1.one.payoff = Math.floor(dbRes1.one.bet * 1.5)
+                        let dbRes2 = await Users.findById(dbRes.players[index1])
+                        dbRes2.coins += dbRes1.one.payoff
+                        round.winners.push(dbRes2._id)
+                        dbRes2.save()
+                    }
+
+                    dbRes1.save()
+                }
+
+            }
+        }
+        dbRes.finished = true
+        dbRes.save()
+
+        res.status(201).json({ "message": "game finished" })
+    }
+    catch (err) {
+        res.status(500).json({ "error": err })
+    }
+})
+
+// winner
+
+router.get("/winner/:gameid")
