@@ -279,3 +279,59 @@ router.get("/stand/:hand_id", async (req, res) => {
     }
 })
 
+// double down - double bet if hand value is 9,10 or 11
+router.get("/double_down/:hand_id", async (req, res) => {
+    try {
+        let dbRes = await Hands.findById(req.params.hand_id)
+
+        if (dbRes.one.handStatus != "ACTIVE")
+            res.status(200).json({ "message": "hand is not active" })
+        else if (dbRes.one.handValue == 11 || dbRes.one.handValue == 10 || dbRes.one.handValue == 9) {
+            dbRes.one.bet *= 2
+            dbRes.save()
+            res.status(200).json({ "message": "bet doubled", "bet": dbRes.one.bet })
+        }
+        else {
+            res.status(200).json({ "message": "current hand value not 9,10 or 11" })
+        }
+    }
+    catch (err) {
+        res.status(500).json({ "error": err })
+    }
+})
+
+//split
+router.get("/split/:hand_id", async (req, res) => {
+    try {
+        let dbRes = await Hands.findById(req.params.hand_id)
+        if (dbRes.one.handStatus != "ACTIVE")
+            res.status(200).json({ "message": "hand is not active" })
+        if (dbRes.one.turn > 0)
+            res.status(200).json({ "message": "Cannot split! Not your first turn" })
+
+        if (dbRes.one.cards[0][0] == dbRes.one.cards[1][0]) {
+            let splitBet = Math.floor(dbRes.one.bet / 2)
+            let card = dbRes.one.cards[1]
+            dbRes.one.cards.splice(1, 1)
+            dbRes.one.handValue /= 2
+            dbRes.one.bet = splitBet
+            dbRes.one.turn = 0
+
+            dbRes.two.cards.push(card)
+            dbRes.two.handValue = dbRes.one.handValue
+            dbRes.two.bet = splitBet
+            dbRes.two.handStatus = "ACTIVE"
+
+            dbRes.save()
+
+            res.status(200).json({ "message": "cards split", "new_hands": dbRes })
+
+        }
+        else
+            res.status(200).json({ "message": "Cannot split! Cards in hand are not equal" })
+    }
+    catch (err) {
+        res.status(500).json({ "error": err })
+    }
+})
+
