@@ -415,7 +415,7 @@ router.get("/finish_game/:game_id", async (req, res) => {
         dbRes.finished = true
         dbRes.save()
 
-        res.status(201).json({ "message": "game finished" })
+        res.status(201).json({ "message": "game finished and progress updated" })
     }
     catch (err) {
         res.status(500).json({ "error": err })

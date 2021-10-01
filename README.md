@@ -270,11 +270,10 @@ The API endpoints to the control the backend is described below.
             "gameid": "6156fbe17123934f41eaa6c6"
         }
     }
-    ## DOUBLE_DOWN
 
 ## GAME STATUS
 
-### Request - complete game snapshot
+### Request - complete snapshot of game
 
 `GET api/v1/status/:game_id`
 
@@ -369,7 +368,7 @@ The API endpoints to the control the backend is described below.
 ### Response
 
     {
-        "message": "game finished"
+        "message": "game finished and progress updated"
     }
     
 ## WINNERS
@@ -380,7 +379,7 @@ The API endpoints to the control the backend is described below.
 
     curl --location --request GET 'http://localhost:8081/api/v1/winner/6156fbe17123934f41eaa6c6'
 
-### Response - roundid and winners array
+### Response - round_id and winners array
 
     {
         "6156fbed7123934f41eaa6cd": ["6156fa1b46be764cb62b2375"]
